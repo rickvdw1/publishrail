@@ -1,0 +1,37 @@
+{
+  "name": "article-pipeline",
+  "version": "1.0.0",
+  "description": "Configurable article-generation pipeline — generate, judge, and publish editorial-quality articles using Claude AI.",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node index.js",
+    "generate:csv": "node index.js --source csv",
+    "generate:json": "node index.js --source json",
+    "generate:nocodb": "node index.js --source nocodb",
+    "generate:sheets": "node index.js --source google-sheets",
+    "export:markdown": "node export-markdown/index.js",
+    "publish:framer": "node -e \"require('./publishers/framerPublisher').publishToFramer([], { dryRun: true })\"",
+    "validate-config": "node -e \"const c = require('./config'); c.loadConfig(); console.log('[ok] Config loaded:', JSON.stringify(c.loadConfig(), null, 2))\"",
+    "ui": "node ui/server.js",
+    "marketing": "node ui/marketing-server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "article-generation",
+    "content-pipeline",
+    "claude",
+    "ai-writing",
+    "nocodb",
+    "framer"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
+    "axios": "^1.16.1",
+    "dotenv": "^17.4.2",
+    "js-yaml": "^4.2.0",
+    "slugify": "^1.6.9",
+    "zod": "^4.4.3"
+  }
+}

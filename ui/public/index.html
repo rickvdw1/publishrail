@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article Pipeline</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+<!-- ─── Sidebar ───────────────────────────────────────── -->
+<aside id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M2 4l6-2 6 2v6l-6 4-6-4V4z"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">Article Pipeline</div>
+      <div class="brand-sub">AI content generation</div>
+    </div>
+  </div>
+
+  <nav id="nav">
+    <div class="nav-section">Workspace</div>
+    <a data-page="home" class="active">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1h6v6H1V1zm8 0h6v6H9V1zm-8 8h6v6H1V9zm8 0h6v6H9V9z"/></svg></span>
+      Home
+    </a>
+    <a data-page="sources">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="8" cy="4.5" rx="5.5" ry="2"/><path d="M2.5 4.5v3c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-3"/><path d="M2.5 7.5v3c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-3"/></svg></span>
+      Sources
+    </a>
+    <div class="nav-section">Content</div>
+    <a data-page="knowledge">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h5a2 2 0 012 2v7.5A1.5 1.5 0 007.5 11H2V3z"/><path d="M14 3H9a2 2 0 00-2 2v7.5A1.5 1.5 0 018.5 11H14V3z"/></svg></span>
+      Knowledge
+    </a>
+    <a data-page="prompts">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3l8-8z"/><path d="M9 4l3 3"/></svg></span>
+      Prompts
+    </a>
+    <a data-page="queue">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h8"/></svg></span>
+      Queue
+    </a>
+    <div class="nav-section">Pipeline</div>
+    <a data-page="generate">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5l9 5.5-9 5.5V2.5z"/></svg></span>
+      Generate
+    </a>
+    <a data-page="outputs">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5a1 1 0 011-1h3l2 2h5a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1V5z"/></svg></span>
+      Outputs
+    </a>
+    <a data-page="publishers">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10V3m0 0L5 6m3-3l3 3"/><path d="M3 13h10"/></svg></span>
+      Publishers
+    </a>
+    <a data-page="settings">
+      <span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h10M3 12h10"/><circle cx="6" cy="4" r="1.5" fill="currentColor" stroke="none"/><circle cx="10" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="6" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></span>
+      Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    Article Pipeline &mdash; <a href="https://github.com/rickvdw1/article-publisher-opensource" target="_blank">GitHub</a>
+  </div>
+</aside>
+
+<!-- ─── Main ───────────────────────────────────────────── -->
+<main id="main">
+
+<!-- ═══ HOME ══════════════════════════════════════════════ -->
+<section id="page-home" class="page active">
+  <div class="page-header">
+    <h2>Command Center</h2>
+    <p>Your article pipeline at a glance.</p>
+  </div>
+
+  <!-- Pipeline rail -->
+  <div class="pipeline-rail">
+    <div class="pipe-node" id="pipe-source">
+      <div class="pipe-icon">⊡</div>
+      <div class="pipe-label">Source</div>
+      <div class="pipe-value" id="pipe-source-val">—</div>
+    </div>
+    <div class="pipe-connector"></div>
+    <div class="pipe-node" id="pipe-knowledge">
+      <div class="pipe-icon">◈</div>
+      <div class="pipe-label">Knowledge</div>
+      <div class="pipe-value" id="pipe-knowledge-val">context files</div>
+    </div>
+    <div class="pipe-connector"></div>
+    <div class="pipe-node ready" id="pipe-ai">
+      <div class="pipe-icon">⚡</div>
+      <div class="pipe-label">AI</div>
+      <div class="pipe-value" id="pipe-ai-val">opus</div>
+    </div>
+    <div class="pipe-connector"></div>
+    <div class="pipe-node" id="pipe-generate">
+      <div class="pipe-icon">▶</div>
+      <div class="pipe-label">Generate</div>
+      <div class="pipe-value" id="pipe-generate-val">ready</div>
+    </div>
+    <div class="pipe-connector"></div>
+    <div class="pipe-node" id="pipe-publish">
+      <div class="pipe-icon">↑</div>
+      <div class="pipe-label">Publish</div>
+      <div class="pipe-value" id="pipe-publish-val">markdown</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="card-grid">
+    <div class="stat-card">
+      <div class="stat-label">Queued articles</div>
+      <div class="stat-value" id="stat-queued">—</div>
+      <div class="stat-sub">not_started</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Generated outputs</div>
+      <div class="stat-value" id="stat-outputs">—</div>
+      <div class="stat-sub">in outputs/</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">AI provider</div>
+      <div class="stat-value" id="stat-provider" style="font-size:18px">—</div>
+      <div class="stat-sub" id="stat-model">—</div>
+    </div>
+  </div>
+
+  <!-- Publisher readiness -->
+  <div class="card mb-4">
+    <div class="card-header"><h3>Publisher readiness</h3></div>
+    <div class="card-body" id="publisher-status-body">
+      <div class="empty-state"><p>Loading publisher status…</p></div>
+    </div>
+  </div>
+
+  <!-- Recent outputs -->
+  <div class="card">
+    <div class="card-header"><h3>Recent outputs</h3></div>
+    <div class="card-body" id="recent-outputs-body">
+      <div class="empty-state">
+        <div class="empty-icon">◈</div>
+        <h4>No outputs yet</h4>
+        <p>Run the pipeline to generate your first article.</p>
+        <button class="btn btn-primary btn-sm" onclick="showPage('generate')">Go to Generate</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOURCES ════════════════════════════════════════════ -->
+<section id="page-sources" class="page">
+  <div class="page-header">
+    <h2>Sources</h2>
+    <p>Choose where article inputs come from.</p>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header"><h3>Input source</h3></div>
+    <div class="card-body">
+      <div class="source-grid">
+        <div class="source-card" data-source="json" onclick="selectSource('json')">
+          <div class="source-check">✓</div>
+          <div class="source-card-icon">📄</div>
+          <div class="source-card-name">JSON file</div>
+          <div class="source-card-desc">Read from <code>inputs/articles.json</code>. Simple and portable.</div>
+        </div>
+        <div class="source-card" data-source="csv" onclick="selectSource('csv')">
+          <div class="source-check">✓</div>
+          <div class="source-card-icon">📊</div>
+          <div class="source-card-name">CSV file</div>
+          <div class="source-card-desc">Import from a spreadsheet export or CSV file.</div>
+        </div>
+        <div class="source-card" data-source="nocodb" onclick="selectSource('nocodb')">
+          <div class="source-check">✓</div>
+          <div class="source-card-icon">🗄</div>
+          <div class="source-card-name">NocoDB</div>
+          <div class="source-card-desc">Connect to a NocoDB table via API. Requires env vars.</div>
+        </div>
+        <div class="source-card" data-source="google-sheets" onclick="selectSource('google-sheets')">
+          <div class="source-check">✓</div>
+          <div class="source-card-icon">📑</div>
+          <div class="source-card-name">Google Sheets</div>
+          <div class="source-card-desc">Fetch rows from a Google Sheet via API.</div>
+        </div>
+      </div>
+
+      <!-- NocoDB config (shown only when nocodb selected) -->
+      <div id="nocodb-config" style="display:none">
+        <div class="notice">Set these values in your <code>.env</code> file. The field names below tell the pipeline which env var to read.</div>
+        <div class="form-row">
+          <div class="field">
+            <label>Base URL env var</label>
+            <input type="text" id="cfg-nocodb-base-url-env" value="NOCODB_BASE_URL" placeholder="NOCODB_BASE_URL">
+          </div>
+          <div class="field">
+            <label>API token env var</label>
+            <input type="text" id="cfg-nocodb-token-env" value="NOCODB_API_TOKEN" placeholder="NOCODB_API_TOKEN">
+          </div>
+        </div>
+        <div class="field">
+          <label>Table ID env var</label>
+          <input type="text" id="cfg-nocodb-table-env" value="NOCODB_TABLE_ID" placeholder="NOCODB_TABLE_ID">
+        </div>
+      </div>
+
+      <!-- Hidden field that stores the selected source type -->
+      <input type="hidden" id="cfg-source-type" value="json">
+    </div>
+  </div>
+
+  <div class="flex gap-2 items-center">
+    <button class="btn btn-primary" id="save-sources-btn">Save source</button>
+    <span id="save-sources-status" class="text-sm text-muted"></span>
+  </div>
+</section>
+
+<!-- ═══ KNOWLEDGE ══════════════════════════════════════════ -->
+<section id="page-knowledge" class="page">
+  <div class="page-header">
+    <h2>Knowledge</h2>
+    <p>Context files that shape every generated article — brand voice, glossary, evaluation criteria.</p>
+  </div>
+  <div class="tabs" id="context-tabs">
+    <div class="tab active" data-tab="positioning">Positioning</div>
+    <div class="tab" data-tab="messaging">Brand voice</div>
+    <div class="tab" data-tab="glossary">Glossary</div>
+    <div class="tab" data-tab="evaluationCriteria">Evaluation criteria</div>
+  </div>
+  <div id="context-panes">
+    <div class="tab-pane active" id="ctx-positioning">
+      <div class="notice">Describes your product, the problem it solves, and how it is positioned. Injected into the writer and judge prompts.</div>
+      <textarea class="tall ctx-editor" data-key="positioning" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm ctx-save" data-key="positioning">Save</button>
+        <button class="btn btn-secondary btn-sm ctx-example" data-key="positioning">Load example</button>
+        <span class="ctx-status text-muted text-sm"></span>
+      </div>
+    </div>
+    <div class="tab-pane" id="ctx-messaging">
+      <div class="notice">Your brand voice guidelines — tone, things to avoid, writing style.</div>
+      <textarea class="tall ctx-editor" data-key="messaging" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm ctx-save" data-key="messaging">Save</button>
+        <button class="btn btn-secondary btn-sm ctx-example" data-key="messaging">Load example</button>
+        <span class="ctx-status text-muted text-sm"></span>
+      </div>
+    </div>
+    <div class="tab-pane" id="ctx-glossary">
+      <div class="notice">Your product's terminology. Ensures the AI uses the right vocabulary.</div>
+      <textarea class="tall ctx-editor" data-key="glossary" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm ctx-save" data-key="glossary">Save</button>
+        <button class="btn btn-secondary btn-sm ctx-example" data-key="glossary">Load example</button>
+        <span class="ctx-status text-muted text-sm"></span>
+      </div>
+    </div>
+    <div class="tab-pane" id="ctx-evaluationCriteria">
+      <div class="notice">What a good article looks like for your brand. The AI judge reads this when scoring.</div>
+      <textarea class="tall ctx-editor" data-key="evaluationCriteria" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm ctx-save" data-key="evaluationCriteria">Save</button>
+        <button class="btn btn-secondary btn-sm ctx-example" data-key="evaluationCriteria">Load example</button>
+        <span class="ctx-status text-muted text-sm"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROMPTS ═════════════════════════════════════════════ -->
+<section id="page-prompts" class="page">
+  <div class="page-header">
+    <h2>Prompt Templates</h2>
+    <p>Instructions given to the AI at each pipeline stage. Use <code>{{VARIABLE}}</code> placeholders.</p>
+  </div>
+  <div class="tabs" id="prompt-tabs">
+    <div class="tab active" data-tab="writer">Comparison writer</div>
+    <div class="tab" data-tab="blogPost">Blog post</div>
+    <div class="tab" data-tab="landingPage">Landing page</div>
+    <div class="tab" data-tab="judge">Judge</div>
+    <div class="tab" data-tab="rewrite">Rewrite</div>
+    <div class="tab" data-tab="research">Research</div>
+  </div>
+  <div id="prompt-panes">
+    <div class="tab-pane active" id="prompt-writer">
+      <textarea class="tall ctx-editor" data-key="writer" data-type="prompt" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm prompt-save" data-key="writer">Save</button>
+        <span class="prompt-status text-muted text-sm"></span>
+      </div>
+    </div>
+    <div class="tab-pane" id="prompt-blogPost">
+      <textarea class="tall ctx-editor" data-key="blogPost" data-type="prompt" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm prompt-save" data-key="blogPost">Save</button>
+        <span class="prompt-status text-muted text-sm"></span>
+      </div>
+    </div>
+    <div class="tab-pane" id="prompt-landingPage">
+      <textarea class="tall ctx-editor" data-key="landingPage" data-type="prompt" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm prompt-save" data-key="landingPage">Save</button>
+        <span class="prompt-status text-muted text-sm"></span>
+      </div>
+    </div>
+    <div class="tab-pane" id="prompt-judge">
+      <textarea class="tall ctx-editor" data-key="judge" data-type="prompt" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm prompt-save" data-key="judge">Save</button>
+        <span class="prompt-status text-muted text-sm"></span>
+      </div>
+    </div>
+    <div class="tab-pane" id="prompt-rewrite">
+      <textarea class="tall ctx-editor" data-key="rewrite" data-type="prompt" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm prompt-save" data-key="rewrite">Save</button>
+        <span class="prompt-status text-muted text-sm"></span>
+      </div>
+    </div>
+    <div class="tab-pane" id="prompt-research">
+      <textarea class="tall ctx-editor" data-key="research" data-type="prompt" placeholder="Loading…"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button class="btn btn-primary btn-sm prompt-save" data-key="research">Save</button>
+        <span class="prompt-status text-muted text-sm"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ QUEUE ════════════════════════════════════════════════ -->
+<section id="page-queue" class="page">
+  <div class="page-header page-header-row">
+    <div>
+      <h2>Article Queue</h2>
+      <p>Articles staged for generation in <code>inputs/articles.json</code>.</p>
+    </div>
+    <button class="btn btn-primary" id="new-article-btn">+ Add article</button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Competitor</th>
+            <th>Keyword</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="articles-tbody">
+          <tr><td colspan="7">
+            <div class="empty-state">
+              <div class="empty-icon">☰</div>
+              <h4>No articles queued</h4>
+              <p>Click "+ Add article" to stage your first article for generation.</p>
+            </div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GENERATE ════════════════════════════════════════════ -->
+<section id="page-generate" class="page">
+  <div class="page-header">
+    <h2>Generate</h2>
+    <p>Run the pipeline and stream live output.</p>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="form-row">
+        <div class="field">
+          <label>Source</label>
+          <select id="gen-source">
+            <option value="json">JSON file (inputs/articles.json)</option>
+            <option value="csv">CSV file</option>
+            <option value="nocodb">NocoDB</option>
+            <option value="google-sheets">Google Sheets</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Max articles to generate</label>
+          <input type="number" id="gen-limit" value="1" min="1" max="50">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Output targets</label>
+        <div class="output-target-group" id="output-target-group">
+          <label class="output-target-btn">
+            <input type="checkbox" name="output-target" value="markdown" checked>
+            <span>Markdown</span>
+          </label>
+          <label class="output-target-btn">
+            <input type="checkbox" name="output-target" value="github">
+            <span>GitHub</span>
+          </label>
+          <label class="output-target-btn">
+            <input type="checkbox" name="output-target" value="framer">
+            <span>Framer</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="warning-box" id="gen-github-warning" style="display:none">
+        <span class="warning-icon">⚠</span>
+        GitHub target selected but <strong>GITHUB_TOKEN</strong> is not set. Add it to your <code>.env</code> file.
+      </div>
+      <div class="warning-box" id="gen-framer-warning" style="display:none">
+        <span class="warning-icon">⚠</span>
+        Framer target selected but <strong>FRAMER_TOKEN</strong> is not set. Add it to your <code>.env</code> file.
+      </div>
+
+      <div class="toggle-row mt-4">
+        <label class="flex items-center gap-2" style="cursor:pointer;font-weight:500">
+          <label class="toggle-switch" style="margin:0">
+            <input type="checkbox" id="gen-dry-run">
+            <span class="toggle-slider"></span>
+          </label>
+          <span>Dry run <span class="text-muted text-sm">(no source writes or publishes)</span></span>
+        </label>
+        <span class="badge-dry-run" id="dry-run-badge" style="display:none">DRY RUN</span>
+      </div>
+
+      <div class="mt-4 flex gap-2 items-center">
+        <button class="btn btn-primary btn-lg" id="gen-btn">&#9654; Run pipeline</button>
+        <button class="btn btn-secondary" id="gen-stop-btn" disabled>&#9632; Stop</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header flex justify-between items-center">
+      <h3>Output log</h3>
+      <button class="btn btn-secondary btn-sm" id="clear-log-btn">Clear</button>
+    </div>
+    <div style="padding:0">
+      <div id="log-box">Ready. Press "Run pipeline" to start.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ OUTPUTS ═════════════════════════════════════════════ -->
+<section id="page-outputs" class="page">
+  <div class="page-header">
+    <h2>Outputs</h2>
+    <p>Generated articles saved in <code>outputs/</code>.</p>
+  </div>
+  <div class="card" id="outputs-list-card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Score</th>
+            <th>Generated</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="outputs-tbody">
+          <tr><td colspan="5">
+            <div class="empty-state">
+              <div class="empty-icon">◈</div>
+              <h4>No outputs yet</h4>
+              <p>Run the pipeline in the Generate tab to create your first article.</p>
+              <button class="btn btn-primary btn-sm" onclick="showPage('generate')">Go to Generate</button>
+            </div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PUBLISHERS ══════════════════════════════════════════ -->
+<section id="page-publishers" class="page">
+  <div class="page-header">
+    <h2>Publishers</h2>
+    <p>Configure where generated articles are delivered.</p>
+  </div>
+
+  <!-- Markdown -->
+  <div class="publisher-card mb-4">
+    <div class="publisher-card-header">
+      <div class="publisher-card-info">
+        <div class="publisher-card-icon">📝</div>
+        <div>
+          <div class="publisher-card-name">Markdown</div>
+          <div class="publisher-card-sub">Always enabled — saves .md files locally</div>
+        </div>
+      </div>
+      <span class="badge badge-green">Always on</span>
+    </div>
+    <div class="publisher-card-body">
+      <div class="field">
+        <label>Output directory</label>
+        <input type="text" id="cfg-markdown-dir" value="outputs/markdown" placeholder="outputs/markdown">
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub -->
+  <div class="publisher-card mb-4">
+    <div class="publisher-card-header">
+      <div class="publisher-card-info">
+        <div class="publisher-card-icon">⌥</div>
+        <div>
+          <div class="publisher-card-name">GitHub</div>
+          <div class="publisher-card-sub">Commit articles to a GitHub repository</div>
+        </div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="cfg-github-enabled">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="publisher-card-body">
+      <div class="notice">Requires a personal access token with <code>repo</code> scope set in your <code>.env</code> file.</div>
+      <div class="warning-box" id="github-token-warning" style="display:none">
+        <span class="warning-icon">⚠</span> <strong>GITHUB_TOKEN</strong> is not set in your environment. Add it to your <code>.env</code> file to enable publishing.
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Token env var name</label>
+          <input type="text" id="cfg-github-token-env" value="GITHUB_TOKEN" placeholder="GITHUB_TOKEN">
+        </div>
+        <div class="field">
+          <label>Branch</label>
+          <input type="text" id="cfg-github-branch" value="main" placeholder="main">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Owner env var name</label>
+          <input type="text" id="cfg-github-owner-env" value="GITHUB_OWNER" placeholder="GITHUB_OWNER">
+        </div>
+        <div class="field">
+          <label>Repo env var name</label>
+          <input type="text" id="cfg-github-repo-env" value="GITHUB_REPO" placeholder="GITHUB_REPO">
+        </div>
+      </div>
+      <div class="field">
+        <label>Folder path in repo</label>
+        <input type="text" id="cfg-github-folder" value="content/articles" placeholder="content/articles">
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Overwrite existing files</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="cfg-github-overwrite">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Framer -->
+  <div class="publisher-card">
+    <div class="publisher-card-header">
+      <div class="publisher-card-info">
+        <div class="publisher-card-icon">◆</div>
+        <div>
+          <div class="publisher-card-name">Framer CMS</div>
+          <div class="publisher-card-sub">Publish directly to a Framer CMS collection</div>
+        </div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="cfg-framer-enabled">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="publisher-card-body">
+      <div class="notice">Requires a Framer API token set in your <code>.env</code> file.</div>
+      <div class="warning-box" id="framer-token-warning" style="display:none">
+        <span class="warning-icon">⚠</span> <strong>FRAMER_TOKEN</strong> is not set in your environment. Add it to your <code>.env</code> file to enable publishing.
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Token env var name</label>
+          <input type="text" id="cfg-framer-token-env" value="FRAMER_TOKEN" placeholder="FRAMER_TOKEN">
+        </div>
+        <div class="field">
+          <label>Collection ID env var name</label>
+          <input type="text" id="cfg-framer-collection-env" value="FRAMER_COLLECTION_ID" placeholder="FRAMER_COLLECTION_ID">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Publishing mode</label>
+          <select id="cfg-framer-mode">
+            <option value="single-body">Single body — full article in one field</option>
+            <option value="section-mapped">Section mapped — split H2 sections into separate fields</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Metadata field mapping <span style="font-weight:400;color:var(--c-text-3)">(JSON — pipeline field → Framer field name)</span></label>
+        <textarea id="cfg-framer-field-mapping" rows="5" placeholder='{"title":"title","slug":"slug","body":"content","description":"description"}'></textarea>
+      </div>
+      <!-- Section-mapped options -->
+      <div id="framer-section-options" style="display:none">
+        <div class="form-row">
+          <div class="field">
+            <label>Body field <span style="font-weight:400;color:var(--c-text-3)">(field for unmapped / full body fallback)</span></label>
+            <input type="text" id="cfg-framer-body-field" placeholder="content">
+          </div>
+          <div class="field">
+            <label>Intro field <span style="font-weight:400;color:var(--c-text-3)">(content before first H2)</span></label>
+            <input type="text" id="cfg-framer-intro-field" placeholder="leave blank to skip">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Section heading matching</label>
+            <select id="cfg-framer-section-matching">
+              <option value="exact">Exact — heading must match exactly</option>
+              <option value="normalized">Normalized — ignore case and punctuation</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Unmapped sections</label>
+            <select id="cfg-framer-unmapped-sections">
+              <option value="ignore">Ignore — skip unmapped sections</option>
+              <option value="append_to_body">Append to body field</option>
+              <option value="warn">Warn in logs</option>
+              <option value="error">Error — fail if any section is unmapped</option>
+            </select>
+          </div>
+        </div>
+        <div class="toggle-row mb-4">
+          <span class="toggle-label">Require all mapped sections to be present</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="cfg-framer-require-mapped">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="field">
+          <label>Section mapping <span style="font-weight:400;color:var(--c-text-3)">(JSON — H2 heading text → Framer field name)</span></label>
+          <textarea id="cfg-framer-section-mapping" rows="8" placeholder='{"What the output looks like":"outputSection","How it works":"howItWorksSection","FAQ":"faqSection"}'></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 flex gap-2 items-center">
+    <button class="btn btn-primary" id="save-publishers-btn">Save publishers</button>
+    <span id="save-publishers-status" class="text-sm text-muted"></span>
+  </div>
+</section>
+
+<!-- ═══ SETTINGS ════════════════════════════════════════════ -->
+<section id="page-settings" class="page">
+  <div class="page-header">
+    <h2>Settings</h2>
+    <p>AI provider, company details, and generation configuration.</p>
+  </div>
+
+  <!-- AI Provider -->
+  <div class="card mb-4">
+    <div class="card-header"><h3>AI Provider</h3></div>
+    <div class="card-body">
+      <div class="notice">API keys are stored only in your local <code>.env</code> file and are never sent to this UI server beyond your own machine.</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Provider</label>
+          <select id="cfg-ai-provider">
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="openai">OpenAI / compatible</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>API Key</label>
+          <input type="password" id="cfg-api-key" placeholder="Stored in .env — not shown here">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Base URL <span style="font-weight:400;color:var(--c-text-3)">(optional — for Fireworks, Together, OpenRouter)</span></label>
+          <input type="text" id="cfg-base-url" placeholder="https://api.fireworks.ai/inference/v1">
+        </div>
+        <div class="field">
+          <label>Model override <span style="font-weight:400;color:var(--c-text-3)">(optional)</span></label>
+          <input type="text" id="cfg-model" placeholder="e.g. gpt-4o or claude-sonnet-4-6">
+        </div>
+      </div>
+      <div class="notice warn" id="openai-hint" style="display:none">
+        For OpenAI-compatible providers, set Base URL to your provider's endpoint.
+        Examples: <code>https://api.fireworks.ai/inference/v1</code> · <code>https://api.together.xyz/v1</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Company & Project -->
+  <div class="card mb-4">
+    <div class="card-header"><h3>Company &amp; Project</h3></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="field">
+          <label>Company name</label>
+          <input type="text" id="cfg-company-name" placeholder="Your Company Name">
+        </div>
+        <div class="field">
+          <label>Project name</label>
+          <input type="text" id="cfg-project-name" placeholder="My Article Pipeline">
+        </div>
+      </div>
+      <div class="field">
+        <label>Product description <span style="font-weight:400;color:var(--c-text-3)">(injected into every prompt)</span></label>
+        <textarea id="cfg-product-desc" rows="3" style="min-height:80px" placeholder="A brief description of your product or service."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generation -->
+  <div class="card mb-4">
+    <div class="card-header"><h3>Generation</h3></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="field">
+          <label>Default article type</label>
+          <select id="cfg-article-type">
+            <option value="comparison">Comparison page</option>
+            <option value="blog_post">Blog post</option>
+            <option value="landing_page">Landing page</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Writer model alias</label>
+          <select id="cfg-writer-model">
+            <option value="opus">opus (best quality)</option>
+            <option value="sonnet">sonnet (faster)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Judge model alias</label>
+          <select id="cfg-judge-model">
+            <option value="sonnet">sonnet (recommended)</option>
+            <option value="opus">opus</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex gap-2 items-center">
+    <button class="btn btn-primary" id="save-settings-btn">Save settings</button>
+    <span id="save-settings-status" class="text-sm text-muted"></span>
+  </div>
+</section>
+
+</main><!-- /#main -->
+</div><!-- /#app -->
+
+<!-- ─── Login modal ──────────────────────────────────────── -->
+<div id="login-modal" class="modal-overlay" style="display:none">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h3>Sign in</h3>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--c-text-2);margin-bottom:16px">
+        This instance is protected. Enter your access token to continue.
+      </p>
+      <div class="field">
+        <label>Access token</label>
+        <input type="password" id="login-token" placeholder="Paste your PIPELINE_AUTH_TOKEN" autocomplete="current-password">
+      </div>
+      <div id="login-error" class="notice warn" style="display:none;margin-top:12px">
+        Incorrect token. Check your <code>PIPELINE_AUTH_TOKEN</code> env var.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary w-full" id="login-btn">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Article modal ──────────────────────────────────── -->
+<div id="article-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="article-modal-title">Add article</h3>
+      <button class="modal-close" id="article-modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="tabs" id="article-modal-tabs">
+        <div class="tab active" data-atab="basic">Basic</div>
+        <div class="tab" data-atab="comparison">Comparison</div>
+        <div class="tab" data-atab="seo">SEO</div>
+      </div>
+      <div class="atab-pane" id="atab-basic" style="display:block">
+        <div class="form-row">
+          <div class="field">
+            <label>Article title *</label>
+            <input type="text" id="art-title" placeholder="e.g. TaskFlow vs Linear: Which is better?">
+          </div>
+          <div class="field">
+            <label>Slug</label>
+            <input type="text" id="art-slug" placeholder="auto-generated if blank">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Article type</label>
+            <select id="art-type">
+              <option value="comparison">Comparison</option>
+              <option value="blog_post">Blog post</option>
+              <option value="landing_page">Landing page</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="art-status">
+              <option value="not_started">not_started</option>
+              <option value="skip">skip</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Editor brief / description</label>
+          <textarea id="art-description" rows="3" style="min-height:70px" placeholder="Notes for the AI writer…"></textarea>
+        </div>
+      </div>
+      <div class="atab-pane" id="atab-comparison" style="display:none">
+        <div class="notice">Fill these for comparison articles. Leave blank for other article types.</div>
+        <div class="form-row">
+          <div class="field">
+            <label>Competitor name</label>
+            <input type="text" id="art-competitor" placeholder="e.g. Linear">
+          </div>
+          <div class="field">
+            <label>Competitor category</label>
+            <input type="text" id="art-category" placeholder="e.g. Project management software">
+          </div>
+        </div>
+        <div class="field">
+          <label>Comparison angle</label>
+          <input type="text" id="art-angle" placeholder="e.g. enterprise scalability vs. simplicity">
+        </div>
+        <div class="field">
+          <label>Target personas</label>
+          <input type="text" id="art-personas" placeholder="e.g. Engineering managers, CTOs">
+        </div>
+        <div class="field">
+          <label>Competitor strengths <span style="font-weight:400;color:var(--c-text-3)">(or leave blank to auto-research)</span></label>
+          <textarea id="art-strengths" rows="2" style="min-height:60px"></textarea>
+        </div>
+        <div class="field">
+          <label>Competitor limitations</label>
+          <textarea id="art-limitations" rows="2" style="min-height:60px"></textarea>
+        </div>
+        <div class="field">
+          <label>Product differentiators</label>
+          <textarea id="art-differentiators" rows="2" style="min-height:60px"></textarea>
+        </div>
+      </div>
+      <div class="atab-pane" id="atab-seo" style="display:none">
+        <div class="form-row">
+          <div class="field">
+            <label>Primary keyword</label>
+            <input type="text" id="art-keyword" placeholder="e.g. taskflow vs linear">
+          </div>
+          <div class="field">
+            <label>Secondary keywords</label>
+            <input type="text" id="art-secondary" placeholder="comma-separated">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="article-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="article-modal-save">Save article</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Output preview modal ───────────────────────────── -->
+<div id="output-modal" class="modal-overlay" style="display:none">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header">
+      <h3 id="output-modal-title">Article preview</h3>
+      <button class="modal-close" id="output-modal-close">&times;</button>
+    </div>
+    <div class="modal-body" id="output-modal-body"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

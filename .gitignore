@@ -1,0 +1,57 @@
+# --- Secrets & credentials ---
+.env
+.env.*
+!.env.example
+.env.save
+
+# --- User project config (may contain local paths) ---
+config/project.config.json
+
+# --- Dependencies ---
+node_modules/
+
+# --- Generated pipeline data (local-only) ---
+inputs/*
+!inputs/.gitkeep
+outputs/*
+!outputs/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# --- Verbose run logs ---
+*.run.json
+
+# --- Corpus (generated, grows per run) ---
+corpus-memory.json
+
+# --- Temp / scratch ---
+tmp/
+temp/
+.cache/
+*.zip
+
+# --- Proprietary source docs ---
+*.pdf
+FULL_PROMPT.txt
+TEST_PROMPT_CE.txt
+TEST_PROMPT_DS.txt
+
+# --- OS & editor ---
+.DS_Store
+*.swp
+*.swo
+
+# --- Claude Code local config ---
+.claude/
+
+# --- Possible credential/key files ---
+*.key
+*.pem
+*token*
+*secret*
+*credential*
+
+# --- Editor folders ---
+.vscode/
+.idea/
+/exported-use-cases/

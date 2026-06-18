@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Article Pipeline — AI-native article generation and publishing</title>
+  <meta name="description" content="An open-source pipeline that connects your content source, brand context, and publishing targets into one repeatable workflow. Generate, validate, and publish articles automatically." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Navbar ── -->
+  <header class="navbar">
+    <div class="container">
+      <a href="#" class="nav-brand">
+        <span class="nav-mark">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="10" height="10" rx="2" fill="#7c5cfc" opacity="0.9"/>
+            <rect x="16" y="2" width="10" height="10" rx="2" fill="#7c5cfc" opacity="0.4"/>
+            <rect x="2" y="16" width="10" height="10" rx="2" fill="#7c5cfc" opacity="0.4"/>
+            <rect x="16" y="16" width="10" height="10" rx="2" fill="#00c896" opacity="0.8"/>
+            <line x1="12" y1="7" x2="16" y2="7" stroke="#7c5cfc" stroke-width="1.5" opacity="0.5"/>
+            <line x1="7" y1="12" x2="7" y2="16" stroke="#7c5cfc" stroke-width="1.5" opacity="0.5"/>
+            <line x1="21" y1="12" x2="21" y2="16" stroke="#00c896" stroke-width="1.5" opacity="0.5"/>
+            <line x1="12" y1="21" x2="16" y2="21" stroke="#00c896" stroke-width="1.5" opacity="0.5"/>
+          </svg>
+        </span>
+        Article Pipeline
+      </a>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#open-source">Open source</a>
+        <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+        <a href="http://localhost:3737" class="nav-open-btn">Open app →</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="hero-bg-grid"></div>
+      <div class="hero-bg-glow"></div>
+      <div class="hero-bg-glow-teal"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Open source · Self-hosted · MIT license</div>
+
+      <h1>From structured rows to<br /><em>polished articles</em> — automatically.</h1>
+
+      <p class="hero-sub">
+        An open-source AI pipeline that connects your content source, brand context,
+        and publishing targets into one repeatable workflow.
+      </p>
+
+      <div class="hero-ctas">
+        <a href="https://github.com" class="btn-primary" target="_blank" rel="noopener">
+          Get started free
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="http://localhost:3737" class="btn-secondary">
+          Open the app →
+        </a>
+      </div>
+
+      <!-- Pipeline diagram -->
+      <div class="pipeline-diagram">
+        <!-- Sources -->
+        <div class="pipe-sources">
+          <div class="pipe-source-item">CSV</div>
+          <div class="pipe-source-item">JSON</div>
+          <div class="pipe-source-item">NocoDB</div>
+          <div class="pipe-source-item">Sheets</div>
+        </div>
+
+        <div class="pipe-connector"></div>
+
+        <!-- Context -->
+        <div class="pipe-node">
+          <div class="pipe-node-card">
+            <div class="pipe-node-icon">◈</div>
+            <div class="pipe-node-label">Context</div>
+            <div class="pipe-node-sub">brand · tone · glossary</div>
+          </div>
+        </div>
+
+        <div class="pipe-connector"></div>
+
+        <!-- Generate -->
+        <div class="pipe-node accent">
+          <div class="pipe-node-card">
+            <div class="pipe-node-icon">⬡</div>
+            <div class="pipe-node-label">Generate</div>
+            <div class="pipe-node-sub">AI · prompt templates</div>
+          </div>
+        </div>
+
+        <div class="pipe-connector"></div>
+
+        <!-- Validate -->
+        <div class="pipe-node">
+          <div class="pipe-node-card">
+            <div class="pipe-node-icon">◎</div>
+            <div class="pipe-node-label">Validate</div>
+            <div class="pipe-node-sub">judge · rewrite loop</div>
+          </div>
+        </div>
+
+        <div class="pipe-connector"></div>
+
+        <!-- Targets -->
+        <div class="pipe-targets">
+          <div class="pipe-target-item">Markdown</div>
+          <div class="pipe-target-item">GitHub</div>
+          <div class="pipe-target-item">Framer CMS</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How it works ── -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">How it works</div>
+        <h2>Five steps from row to published article</h2>
+        <p>Each step is configurable. You control the source, the prompt, the model, and the destination.</p>
+      </div>
+
+      <div class="steps-grid">
+
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-body">
+            <h3>Connect your source</h3>
+            <p>Point the pipeline at any structured data source. Each row becomes one article run — no scripting required.</p>
+            <div class="step-badge">
+              <span>csv</span>
+              <span>json</span>
+              <span>nocodb</span>
+              <span>google-sheets</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-body">
+            <h3>Add your context</h3>
+            <p>Drop in a positioning document, messaging guide, product glossary, or evaluation rubric. Every prompt gets the full context — not just the row.</p>
+            <div class="step-badge">
+              <span>positioning.md</span>
+              <span>glossary.md</span>
+              <span>rubric.yaml</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-body">
+            <h3>Configure AI</h3>
+            <p>Set your provider and API key in <code class="mono">.env</code>. Switch between Anthropic, OpenAI-compatible endpoints, OpenRouter, or any local model without touching the pipeline logic.</p>
+            <div class="step-badge">
+              <span>Anthropic</span>
+              <span>OpenAI</span>
+              <span>OpenRouter</span>
+              <span>local endpoint</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <div class="step-body">
+            <h3>Generate &amp; validate</h3>
+            <p>The pipeline writes the article, then runs it through local validators and an AI judge. If quality thresholds aren't met, it rewrites automatically before moving on.</p>
+            <div class="step-badge">
+              <span>local validators</span>
+              <span>AI judge</span>
+              <span>rewrite loop</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">05</div>
+          <div class="step-body">
+            <h3>Publish everywhere</h3>
+            <p>Output to local Markdown files, commit directly to a GitHub repository folder, or push to a Framer CMS collection — including section-mapped mode for structured field mapping.</p>
+            <div class="step-badge">
+              <span>Markdown</span>
+              <span>GitHub</span>
+              <span>Framer CMS</span>
+              <span>section-mapped</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Pain section ── -->
+  <section class="pain-section" id="why">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Why it exists</div>
+        <h2>Article production breaks at scale</h2>
+        <p>Most teams hit the same three walls once they try to publish more than a handful of articles.</p>
+      </div>
+
+      <div class="pain-grid">
+
+        <div class="pain-card">
+          <div class="pain-problem">"Prompting one-off articles doesn't scale"</div>
+          <div class="pain-description">Every article is a separate session. Context gets copy-pasted, quality varies, and there's no audit trail.</div>
+          <div class="pain-solution">Pipeline approach: one config runs every row through the same generation logic, with consistent context and logging.</div>
+        </div>
+
+        <div class="pain-card">
+          <div class="pain-problem">"Brand context gets ignored"</div>
+          <div class="pain-description">Positioning docs and messaging guides live in a Notion page. They never make it into the prompt — unless someone remembers to paste them.</div>
+          <div class="pain-solution">Context files are injected into every prompt automatically. Positioning, glossary, and tone guidance travel with the pipeline.</div>
+        </div>
+
+        <div class="pain-card">
+          <div class="pain-problem">"Publishing still requires copy/paste"</div>
+          <div class="pain-description">After generation comes the manual grind: copy into CMS, format headings, paste into GitHub. One article is fine; fifty is a workflow problem.</div>
+          <div class="pain-solution">Direct publish to Markdown, GitHub, and Framer CMS — including field-level section mapping for structured CMS entries.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Feature grid ── -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Features</div>
+        <h2>Everything the pipeline needs.<br />Nothing it doesn't.</h2>
+      </div>
+
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">⬡</div>
+          <div class="feature-name">Source-driven generation</div>
+          <div class="feature-desc">Each row in your data source becomes one article. Scale by adding rows, not by writing more prompts.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">◈</div>
+          <div class="feature-name">Bring your own context</div>
+          <div class="feature-desc">Drop in positioning docs, tone guides, glossaries, or evaluation rubrics. They're injected into every prompt automatically.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">❰ ❱</div>
+          <div class="feature-name">Custom prompt templates</div>
+          <div class="feature-desc">Edit article prompts directly in the web UI or as plain files. No code changes needed to adjust tone, structure, or depth.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">◎</div>
+          <div class="feature-name">Model-agnostic AI</div>
+          <div class="feature-desc">Set <code class="mono">AI_PROVIDER</code> in your <code class="mono">.env</code>. Swap providers without touching the pipeline. Works with any OpenAI-compatible endpoint.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">✓</div>
+          <div class="feature-name">Deterministic validators</div>
+          <div class="feature-desc">Local rule-based checks run before and after generation. Catch structural problems without spending tokens on another AI call.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⟳</div>
+          <div class="feature-name">AI judge + rewrite loop</div>
+          <div class="feature-desc">An AI judge scores each article against your rubric. Articles that fall below threshold are automatically rewritten and re-evaluated.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">↓</div>
+          <div class="feature-name">Markdown export</div>
+          <div class="feature-desc">Output clean Markdown files with YAML frontmatter to any local directory. Compatible with any static site generator.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⌥</div>
+          <div class="feature-name">GitHub folder publishing</div>
+          <div class="feature-desc">Commit articles directly into a folder in any GitHub repository via the Contents API. No local git checkout needed.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">▣</div>
+          <div class="feature-name">Framer CMS publishing</div>
+          <div class="feature-desc">Push articles to a Framer CMS collection as structured entries. Single-body or section-mapped mode, configurable per run.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⊞</div>
+          <div class="feature-name">Framer section mapping</div>
+          <div class="feature-desc">Map each H2 section in your article to a separate Framer CMS field. Structured publishing without copy/paste.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⬛</div>
+          <div class="feature-name">Web UI included</div>
+          <div class="feature-desc">A local web app for managing runs, reviewing output, editing prompts, and triggering regeneration — no terminal required.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⌘</div>
+          <div class="feature-name">Open-source &amp; self-hosted</div>
+          <div class="feature-desc">MIT licensed. Runs entirely on your machine. API keys stay in your <code class="mono">.env</code> file. No data leaves your environment.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Output targets ── -->
+  <section id="output-targets">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Output targets</div>
+        <h2>Publish where your content lives</h2>
+        <p>Three built-in publishers, each configurable via your project config. Add your own by implementing the publisher interface.</p>
+      </div>
+
+      <div class="targets-grid">
+
+        <div class="target-card">
+          <span class="target-badge md">Markdown</span>
+          <h3>Local files</h3>
+          <p>Generate clean <code class="mono">.md</code> files with YAML frontmatter. Works with Astro, Hugo, Jekyll, Eleventy, or any file-based CMS.</p>
+          <ul class="target-detail">
+            <li>Configurable output directory</li>
+            <li>Slug derived from source row data</li>
+            <li>YAML frontmatter with title, date, and custom fields</li>
+            <li>Compatible with any static site generator</li>
+          </ul>
+        </div>
+
+        <div class="target-card">
+          <span class="target-badge gh">GitHub</span>
+          <h3>Repository folder</h3>
+          <p>Commit articles directly to a folder in any GitHub repository using the Contents API. No local git checkout required.</p>
+          <ul class="target-detail">
+            <li>Works with any public or private repo</li>
+            <li>Dry-run mode previews changes without committing</li>
+            <li>Commit message templating</li>
+            <li>File path and naming configurable per project</li>
+          </ul>
+        </div>
+
+        <div class="target-card">
+          <span class="target-badge fr">Framer CMS</span>
+          <h3>CMS collections</h3>
+          <p>Push structured article data directly to a Framer CMS collection. Supports single-body entries or section-mapped fields.</p>
+          <ul class="target-detail">
+            <li>Single-body mode: full article as one field</li>
+            <li>Section-mapped mode: each H2 maps to a CMS field</li>
+            <li>Slug, title, and metadata fields auto-populated</li>
+            <li>Dry-run support for previewing without publishing</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Framer section mapping ── -->
+  <section class="framer-callout">
+    <div class="container">
+      <div class="mapping-wrapper">
+        <div class="mapping-header">
+          <div class="section-label" style="text-align:center">Framer section mapping</div>
+          <h2 style="font-size:clamp(24px,3.5vw,38px);font-weight:700;letter-spacing:-0.03em;margin-bottom:14px;color:var(--c-text)">One H2 section. One CMS field.</h2>
+          <p style="font-size:15px;color:var(--c-text-2);line-height:1.65">Section-mapped mode lets each H2 heading in your article target a specific Framer CMS field — no copy/paste required.</p>
+        </div>
+
+        <div class="mapping-table">
+          <div class="mapping-row mapping-row-header">
+            <div class="col">Article H2 section</div>
+            <div class="col" style="text-align:center"></div>
+            <div class="col">Framer CMS field</div>
+          </div>
+          <div class="mapping-row">
+            <div class="map-article">What the output looks like</div>
+            <div class="map-arrow">→</div>
+            <div class="map-field">outputSection</div>
+          </div>
+          <div class="mapping-row">
+            <div class="map-article">How it works</div>
+            <div class="map-arrow">→</div>
+            <div class="map-field">howItWorksSection</div>
+          </div>
+          <div class="mapping-row">
+            <div class="map-article">Pricing comparison</div>
+            <div class="map-arrow">→</div>
+            <div class="map-field">pricingSection</div>
+          </div>
+          <div class="mapping-row">
+            <div class="map-article">FAQ</div>
+            <div class="map-arrow">→</div>
+            <div class="map-field">faqSection</div>
+          </div>
+        </div>
+
+        <p class="mapping-caption">
+          Configure the section-to-field mapping in your project config.
+          The pipeline extracts each H2 section from the generated article and sends it to the corresponding Framer CMS field.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Model flexibility ── -->
+  <section id="models">
+    <div class="container">
+      <div class="models-eyebrow">
+        <span class="tag">Model flexibility</span>
+      </div>
+      <h2 class="models-headline">Use the model you trust.<br />Keep the pipeline.</h2>
+      <p class="models-sub">No lock-in. Set your provider in <code class="mono">AI_PROVIDER</code> and swap models at any time.</p>
+
+      <div class="models-grid">
+        <div class="model-card">
+          <div class="model-card-icon">◆</div>
+          <h4>Anthropic</h4>
+          <p>Claude models via the Anthropic API. Configurable model name and max tokens.</p>
+        </div>
+        <div class="model-card">
+          <div class="model-card-icon">⬡</div>
+          <h4>OpenAI-compatible</h4>
+          <p>Any provider that implements the OpenAI chat completions API. Set <code class="mono">AI_BASE_URL</code> to point anywhere.</p>
+        </div>
+        <div class="model-card">
+          <div class="model-card-icon">◈</div>
+          <h4>OpenRouter</h4>
+          <p>Access dozens of models through a single API key. Model selection stays in config.</p>
+        </div>
+        <div class="model-card">
+          <div class="model-card-icon">⊡</div>
+          <h4>Local endpoint</h4>
+          <p>Point <code class="mono">AI_BASE_URL</code> at Ollama, LM Studio, or any local OpenAI-compatible server.</p>
+        </div>
+      </div>
+
+      <div class="models-code-hint">
+        <div class="code-hint">
+          <span class="comment"># .env — change the model without touching pipeline code</span><br />
+          <span class="k">AI_PROVIDER</span>=<span class="v">anthropic</span><br />
+          <span class="k">AI_MODEL</span>=<span class="v">claude-opus-4-5</span><br />
+          <span class="k">AI_API_KEY</span>=<span class="val-dim">sk-ant-…</span><br />
+          <br />
+          <span class="comment"># Switch to a local endpoint</span><br />
+          <span class="k">AI_PROVIDER</span>=<span class="v">openai-compatible</span><br />
+          <span class="k">AI_BASE_URL</span>=<span class="v">http://localhost:11434/v1</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Use cases ── -->
+  <section id="use-cases">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Use cases</div>
+        <h2>Built for repeatable content workflows</h2>
+        <p>Any time a row in a spreadsheet or database should become a published article, the pipeline fits.</p>
+      </div>
+
+      <div class="use-cases-grid">
+
+        <div class="use-case-card">
+          <div class="use-case-num">01</div>
+          <h4>SEO comparison pages</h4>
+          <p>Maintain a spreadsheet of product pairs. The pipeline turns each row into a structured comparison article published directly to your site or CMS.</p>
+        </div>
+
+        <div class="use-case-card">
+          <div class="use-case-num">02</div>
+          <h4>Blog post production at scale</h4>
+          <p>Define topics in a CSV or NocoDB table. Generate, validate, and publish a full editorial article for each one in a single pipeline run.</p>
+        </div>
+
+        <div class="use-case-card">
+          <div class="use-case-num">03</div>
+          <h4>Programmatic landing pages</h4>
+          <p>Turn a data sheet of keywords, use cases, or segments into complete landing page copy published as Markdown or Framer CMS entries.</p>
+        </div>
+
+        <div class="use-case-card">
+          <div class="use-case-num">04</div>
+          <h4>Framer CMS content ops</h4>
+          <p>Keep content in Google Sheets or NocoDB, then publish structured entries directly to Framer collections — including section-mapped field output.</p>
+        </div>
+
+        <div class="use-case-card">
+          <div class="use-case-num">05</div>
+          <h4>GitHub-based static sites</h4>
+          <p>Commit Markdown articles directly into a content folder in your GitHub repository. Trigger deployments from the same pipeline run.</p>
+        </div>
+
+        <div class="use-case-card">
+          <div class="use-case-num">06</div>
+          <h4>Agency content workflows</h4>
+          <p>Run pipelines per client with separate context files, prompt templates, and publish targets. Repeatability at the account level, not just the article level.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Open source ── -->
+  <section class="oss-section" id="open-source">
+    <div class="container">
+      <div class="oss-grid">
+        <div class="oss-left">
+          <div class="section-label">Open source</div>
+          <h2>Self-hosted. No vendor lock-in. Bring your own keys.</h2>
+          <p>Article Pipeline runs entirely on your machine. Your content, your context, and your API keys never leave your environment.</p>
+          <p>The publisher architecture is extensible — implement the interface and add your own output target without modifying core pipeline code.</p>
+          <div class="oss-traits">
+            <div class="oss-trait">
+              <div class="oss-trait-dot"></div>
+              MIT licensed — use it, fork it, modify it
+            </div>
+            <div class="oss-trait">
+              <div class="oss-trait-dot"></div>
+              <code class="mono">.env.example</code> included — no guessing which keys are needed
+            </div>
+            <div class="oss-trait">
+              <div class="oss-trait-dot"></div>
+              Dry-run mode for every publisher — preview before you commit
+            </div>
+            <div class="oss-trait">
+              <div class="oss-trait-dot"></div>
+              Extensible publisher pattern — add your own output target
+            </div>
+            <div class="oss-trait">
+              <div class="oss-trait-dot"></div>
+              Web UI runs locally on <code class="mono">localhost:3737</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="oss-right">
+          <div class="code-block-header">
+            <div class="dots">
+              <div class="dot dot-r"></div>
+              <div class="dot dot-y"></div>
+              <div class="dot dot-g"></div>
+            </div>
+            <span class="code-block-filename">.env.example</span>
+          </div>
+          <pre class="code-block"><span class="comment"># Source</span>
+<span class="key">SOURCE_TYPE</span>=<span class="val">csv</span>
+<span class="key">CSV_PATH</span>=<span class="val">./inputs/articles.csv</span>
+
+<span class="comment"># AI provider</span>
+<span class="key">AI_PROVIDER</span>=<span class="val">anthropic</span>
+<span class="key">AI_MODEL</span>=<span class="val">claude-opus-4-5</span>
+<span class="key">AI_API_KEY</span>=<span class="val-dim">your_api_key_here</span>
+
+<span class="comment"># Publisher</span>
+<span class="key">PUBLISHER</span>=<span class="val">markdown</span>
+<span class="key">OUTPUT_DIR</span>=<span class="val">./outputs</span>
+
+<span class="comment"># GitHub publisher (optional)</span>
+<span class="key">GITHUB_TOKEN</span>=<span class="val-dim">your_github_token_here</span>
+<span class="key">GITHUB_REPO</span>=<span class="val">your-org/your-repo</span>
+<span class="key">GITHUB_CONTENT_PATH</span>=<span class="val">content/articles</span>
+
+<span class="comment"># Framer publisher (optional)</span>
+<span class="key">FRAMER_API_KEY</span>=<span class="val-dim">your_framer_key_here</span>
+<span class="key">FRAMER_COLLECTION_ID</span>=<span class="val-dim">collection_id_here</span>
+<span class="key">FRAMER_MODE</span>=<span class="val">section-mapped</span></pre>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">FAQ</div>
+        <h2>Common questions</h2>
+      </div>
+
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <div class="faq-q">Is it open source?</div>
+          <div class="faq-a">Yes. Article Pipeline is MIT licensed. You can use it, modify it, and deploy it however you like. The full source is on GitHub.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What data sources are supported?</div>
+          <div class="faq-a">CSV files, JSON files, NocoDB tables, and Google Sheets are supported out of the box. Set <code>SOURCE_TYPE</code> in your <code>.env</code> to switch between them.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Can I use my own prompts?</div>
+          <div class="faq-a">Yes. Prompt templates are editable directly in the web UI or as plain files in your project directory. Adjust tone, structure, length, or article format without changing pipeline code.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Does it publish to Framer?</div>
+          <div class="faq-a">Yes. Set <code>PUBLISHER=framer</code> and configure your Framer API key and collection ID. Supports both single-body mode (full article as one field) and section-mapped mode (each H2 section maps to a separate CMS field).</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Can I map H2 sections to specific Framer fields?</div>
+          <div class="faq-a">Yes — that's section-mapped mode. Set <code>FRAMER_MODE=section-mapped</code> and define the heading-to-field mapping in your project config. The pipeline extracts each H2 section from the generated article and sends it to the corresponding field.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Can I use local models?</div>
+          <div class="faq-a">Yes. Set <code>AI_PROVIDER=openai-compatible</code> and point <code>AI_BASE_URL</code> at any local OpenAI-compatible server — Ollama, LM Studio, or similar. The pipeline doesn't care where the completions come from.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Does it store my API keys?</div>
+          <div class="faq-a">No. API keys live in your local <code>.env</code> file and never leave your machine. The pipeline reads them at runtime. Nothing is sent to any external service other than the AI provider you configure.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Can agencies use it for multiple clients?</div>
+          <div class="faq-a">Yes. The pipeline is designed for repeatable, source-driven workflows. Run separate pipeline configurations per client — each with its own context files, prompt templates, source, and publish target.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Final CTA ── -->
+  <section class="cta-section">
+    <div class="cta-bg"></div>
+    <div class="container">
+      <h2>Start building your article pipeline.</h2>
+      <p class="cta-sub">Open source. Self-hosted. Bring your own AI.</p>
+
+      <div class="cta-cards">
+        <a href="https://github.com" class="cta-card" target="_blank" rel="noopener">
+          <div class="cta-card-icon">⌥</div>
+          <div class="cta-card-label">View on GitHub</div>
+          <div class="cta-card-sub">Clone and self-host</div>
+        </a>
+        <a href="http://localhost:3737" class="cta-card">
+          <div class="cta-card-icon">⬛</div>
+          <div class="cta-card-label">Open the app</div>
+          <div class="cta-card-sub">localhost:3737</div>
+        </a>
+        <a href="https://github.com" class="cta-card" target="_blank" rel="noopener">
+          <div class="cta-card-icon">◈</div>
+          <div class="cta-card-label">Read the docs</div>
+          <div class="cta-card-sub">Setup &amp; configuration</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>
+        Article Pipeline
+        <span class="footer-sep">—</span>
+        Open source, MIT license.
+        <span class="footer-sep">·</span>
+        Built for content teams who publish at scale.
+        <span class="footer-sep">·</span>
+        <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

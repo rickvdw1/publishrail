@@ -1,0 +1,89 @@
+{
+  "projectName": "My Article Pipeline",
+  "company": {
+    "name": "Your Company Name",
+    "productDescription": "A brief description of your product or service."
+  },
+  "ai": {
+    "provider": "anthropic",
+    "comment": "Options: anthropic | openai. Set AI_API_KEY (or ANTHROPIC_API_KEY / OPENAI_API_KEY) in .env. For OpenAI-compatible providers (Fireworks, Together, OpenRouter) set AI_BASE_URL and AI_MODEL in .env."
+  },
+  "articleType": "comparison",
+  "source": {
+    "type": "nocodb",
+    "baseUrlEnv": "NOCODB_BASE_URL",
+    "apiTokenEnv": "NOCODB_API_TOKEN",
+    "tableIdEnv": "NOCODB_TABLE_ID",
+    "csvPath": "inputs/articles.csv",
+    "jsonPath": "inputs/articles.json"
+  },
+  "output": {
+    "targets": ["markdown"],
+    "markdown": {
+      "enabled": true,
+      "outputDir": "outputs/markdown",
+      "metadataFormat": "frontmatter"
+    },
+    "github": {
+      "enabled": false,
+      "dryRunDefault": true,
+      "tokenEnv": "GITHUB_TOKEN",
+      "ownerEnv": "GITHUB_OWNER",
+      "repoEnv": "GITHUB_REPO",
+      "branch": "main",
+      "folder": "content/articles",
+      "commitMessageTemplate": "Add article: {{title}}",
+      "metadataFormat": "frontmatter",
+      "overwriteExisting": false
+    },
+    "framer": {
+      "enabled": false,
+      "dryRunDefault": true,
+      "tokenEnv": "FRAMER_TOKEN",
+      "collectionIdEnv": "FRAMER_COLLECTION_ID",
+      "mode": "single-body",
+      "fieldMapping": {
+        "title": "title",
+        "slug": "slug",
+        "body": "content",
+        "description": "description",
+        "primaryKeyword": "primaryKeyword"
+      },
+      "sectionMapping": {},
+      "bodyField": "content",
+      "introField": null,
+      "sectionMatching": "exact",
+      "unmappedSections": "ignore",
+      "requireMappedSections": false
+    }
+  },
+  "contextFiles": {
+    "positioning": "context/positioning.md",
+    "messaging": "context/messaging.md",
+    "glossary": "context/glossary.md",
+    "evaluationCriteria": "context/evaluation-criteria.md"
+  },
+  "prompts": {
+    "writer": "prompts/writerPrompt.md",
+    "judge": "prompts/judgePrompt.md",
+    "rewrite": "prompts/rewritePrompt.md",
+    "research": "prompts/researchPrompt.md"
+  },
+  "generation": {
+    "writerModel": "opus",
+    "judgeModel": "sonnet",
+    "rewriteModel": "opus",
+    "maxRewrites": 1,
+    "enableResearch": true,
+    "enableJudge": true
+  },
+  "validation": {
+    "requireH2Sections": true,
+    "requireFaqFormat": true,
+    "stripBuildNotes": true,
+    "removeEscapedQuotes": true,
+    "warnOnDuplicateTopics": true,
+    "minWordCount": 1800,
+    "maxWordCount": 2800
+  }
+}
