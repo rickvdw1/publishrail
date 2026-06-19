@@ -178,7 +178,15 @@ function loadQueue() {
   if (!fs.existsSync(p)) return [];
   try {
     const raw = JSON.parse(fs.readFileSync(p, 'utf8'));
-    return Array.isArray(raw) ? raw : (raw.rows || []);
+    const rows = Array.isArray(raw) ? raw : (raw.rows || []);
+    // Ensure every row has an Id so the UI can edit/delete it
+    let maxId = rows.reduce((m, r) => Math.max(m, Number(r.Id) || 0), 0);
+    let needsSave = false;
+    for (const row of rows) {
+      if (!row.Id) { row.Id = ++maxId; needsSave = true; }
+    }
+    if (needsSave) saveQueue(rows);
+    return rows;
   } catch { return []; }
 }
 
