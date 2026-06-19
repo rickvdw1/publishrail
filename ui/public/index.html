@@ -210,6 +210,18 @@
         </div>
       </div>
 
+      <!-- File upload (json / csv only) -->
+      <div id="file-upload-section" style="display:none;margin-top:16px">
+        <div class="notice">Upload a file — it will be saved to <code id="file-upload-dest"></code></div>
+        <div class="flex gap-2 items-center" style="margin-top:10px">
+          <input type="file" id="file-upload-input" style="display:none">
+          <button class="btn btn-secondary" id="file-upload-pick-btn">Choose file</button>
+          <span id="file-upload-name" class="text-muted text-sm">No file chosen</span>
+          <button class="btn btn-primary" id="file-upload-submit-btn" disabled>Upload</button>
+          <span id="file-upload-status" class="text-sm"></span>
+        </div>
+      </div>
+
       <!-- Hidden field that stores the selected source type -->
       <input type="hidden" id="cfg-source-type" value="json">
     </div>
@@ -752,6 +764,7 @@
           </select>
         </div>
       </div>
+      <div id="model-override-notice" class="notice" style="display:none;margin-top:8px"></div>
     </div>
   </div>
 

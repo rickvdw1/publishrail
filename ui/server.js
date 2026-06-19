@@ -174,6 +174,9 @@ function getEnvStatus() {
   for (const key of ENV_VARS_TO_CHECK) {
     status[key] = !!(process.env[key] && process.env[key].trim() !== '');
   }
+  // Actual values (not just presence) so the UI can adapt to custom providers
+  status._aiModel    = process.env.AI_MODEL    || '';
+  status._aiProvider = process.env.AI_PROVIDER || 'anthropic';
   return status;
 }
 
@@ -351,6 +354,21 @@ async function router(req, res) {
       const filePath = safeRootPath('outputs', filename);
       if (!fs.existsSync(filePath)) return json(res, { error: 'Not found' }, 404);
       return json(res, JSON.parse(fs.readFileSync(filePath, 'utf8')));
+    }
+
+    // ── File upload ───────────────────────────────────────────────────────────
+    if (pathname === '/api/upload' && method === 'POST') {
+      const type = url.searchParams.get('type');
+      if (!['json', 'csv'].includes(type)) return json(res, { error: 'Invalid type' }, 400);
+      const body = await readBody(req);
+      if (!body.trim()) return json(res, { error: 'Empty file' }, 400);
+      const cfg  = loadConfig();
+      const dest = type === 'json'
+        ? safeRootPath(process.env.INPUT_JSON_PATH || cfg.source?.jsonPath || 'inputs/articles.json')
+        : safeRootPath(process.env.INPUT_CSV_PATH  || cfg.source?.csvPath  || 'inputs/articles.csv');
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.writeFileSync(dest, body, 'utf8');
+      return json(res, { ok: true });
     }
 
     // ── Generate (SSE) ────────────────────────────────────────────────────────

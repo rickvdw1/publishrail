@@ -227,17 +227,72 @@ async function loadSources() {
   } catch (e) { console.error(e); }
 }
 
+const FILE_UPLOAD_DEST = {
+  json: 'inputs/articles.json',
+  csv:  'inputs/articles.csv',
+};
+
 function selectSource(type, save) {
   document.querySelectorAll('.source-card').forEach((c) => {
     c.classList.toggle('selected', c.dataset.source === type);
   });
   document.getElementById('cfg-source-type').value = type;
   document.getElementById('nocodb-config').style.display = type === 'nocodb' ? '' : 'none';
-  if (save !== false) {
-    // auto-update hidden field; user must still click Save
+
+  const uploadSection = document.getElementById('file-upload-section');
+  const uploadDest    = document.getElementById('file-upload-dest');
+  const uploadInput   = document.getElementById('file-upload-input');
+  if (FILE_UPLOAD_DEST[type]) {
+    uploadSection.style.display = '';
+    uploadDest.textContent = FILE_UPLOAD_DEST[type];
+    uploadInput.accept = type === 'json' ? '.json' : '.csv';
+    // reset state
+    document.getElementById('file-upload-name').textContent   = 'No file chosen';
+    document.getElementById('file-upload-submit-btn').disabled = true;
+    document.getElementById('file-upload-status').textContent  = '';
+    uploadInput.value = '';
+  } else {
+    uploadSection.style.display = 'none';
   }
 }
 window.selectSource = selectSource;
+
+// File upload handlers
+document.getElementById('file-upload-pick-btn').addEventListener('click', () => {
+  document.getElementById('file-upload-input').click();
+});
+
+document.getElementById('file-upload-input').addEventListener('change', function () {
+  const file = this.files[0];
+  document.getElementById('file-upload-name').textContent    = file ? file.name : 'No file chosen';
+  document.getElementById('file-upload-submit-btn').disabled = !file;
+  document.getElementById('file-upload-status').textContent  = '';
+});
+
+document.getElementById('file-upload-submit-btn').addEventListener('click', async () => {
+  const input  = document.getElementById('file-upload-input');
+  const status = document.getElementById('file-upload-status');
+  const file   = input.files[0];
+  if (!file) return;
+
+  const type = document.getElementById('cfg-source-type').value;
+  status.textContent = 'Uploading…';
+  status.style.color = 'var(--c-text-2)';
+
+  try {
+    const text = await file.text();
+    const token = getStoredToken();
+    const headers = { 'Content-Type': 'text/plain' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(`/api/upload?type=${type}`, { method: 'POST', headers, body: text });
+    if (!res.ok) throw new Error((await res.json()).error || res.status);
+    status.textContent = `Saved to ${FILE_UPLOAD_DEST[type]}`;
+    status.style.color = 'var(--success)';
+  } catch (e) {
+    status.textContent = `Error: ${e.message}`;
+    status.style.color = 'var(--danger)';
+  }
+});
 
 document.getElementById('save-sources-btn').addEventListener('click', async () => {
   const status = document.getElementById('save-sources-status');
@@ -264,7 +319,7 @@ document.getElementById('save-sources-btn').addEventListener('click', async () =
 
 async function loadSettings() {
   try {
-    const cfg = await get('/config');
+    const [cfg, envStatus] = await Promise.all([get('/config'), getEnvStatus()]);
     document.getElementById('cfg-company-name').value  = cfg.company?.name || '';
     document.getElementById('cfg-project-name').value  = cfg.projectName || '';
     document.getElementById('cfg-product-desc').value  = cfg.company?.productDescription || '';
@@ -273,6 +328,18 @@ async function loadSettings() {
     document.getElementById('cfg-writer-model').value  = cfg.generation?.writerModel || 'opus';
     document.getElementById('cfg-judge-model').value   = cfg.generation?.judgeModel || 'sonnet';
     updateOpenAIHint();
+
+    // Show notice when AI_MODEL env var is set — it overrides the aliases above
+    const notice   = document.getElementById('model-override-notice');
+    const aiModel  = envStatus._aiModel;
+    if (notice) {
+      if (aiModel) {
+        notice.style.display = '';
+        notice.textContent   = `AI_MODEL is set in your .env (${aiModel}) — this overrides the writer and judge aliases above for all pipeline stages.`;
+      } else {
+        notice.style.display = 'none';
+      }
+    }
   } catch (e) {
     console.error(e);
   }
