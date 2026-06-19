@@ -214,16 +214,22 @@ async function loadDashboard() {
 
 async function loadSources() {
   try {
-    const cfg = await get('/config');
+    const [cfg, envVars] = await Promise.all([get('/config'), get('/env')]);
     const src = cfg.source?.type || 'json';
     document.getElementById('cfg-source-type').value = src;
     selectSource(src, false);
 
-    if (src === 'nocodb') {
-      document.getElementById('cfg-nocodb-base-url-env').value = cfg.source?.baseUrlEnv   || 'NOCODB_BASE_URL';
-      document.getElementById('cfg-nocodb-token-env').value    = cfg.source?.apiTokenEnv  || 'NOCODB_API_TOKEN';
-      document.getElementById('cfg-nocodb-table-env').value    = cfg.source?.tableIdEnv   || 'NOCODB_TABLE_ID';
+    const urlEl   = document.getElementById('cfg-nocodb-base-url');
+    const tokenEl = document.getElementById('cfg-nocodb-token');
+    const tableEl = document.getElementById('cfg-nocodb-table-id');
+    if (urlEl)   urlEl.value   = envVars.NOCODB_BASE_URL  || '';
+    if (tokenEl) {
+      tokenEl.value       = '';
+      tokenEl.placeholder = envVars.NOCODB_API_TOKEN === '__set__'
+        ? 'Currently set — leave blank to keep'
+        : 'Enter token';
     }
+    if (tableEl) tableEl.value = envVars.NOCODB_TABLE_ID  || '';
   } catch (e) { console.error(e); }
 }
 
@@ -299,13 +305,35 @@ document.getElementById('save-sources-btn').addEventListener('click', async () =
   try {
     const cfg = await get('/config');
     const srcType = document.getElementById('cfg-source-type').value;
-    cfg.source = { ...cfg.source, type: srcType };
+    cfg.source = {
+      ...cfg.source,
+      type:       srcType,
+      baseUrlEnv: 'NOCODB_BASE_URL',
+      apiTokenEnv: 'NOCODB_API_TOKEN',
+      tableIdEnv:  'NOCODB_TABLE_ID',
+    };
+
+    const envUpdates = {};
     if (srcType === 'nocodb') {
-      cfg.source.baseUrlEnv  = document.getElementById('cfg-nocodb-base-url-env').value.trim() || 'NOCODB_BASE_URL';
-      cfg.source.apiTokenEnv = document.getElementById('cfg-nocodb-token-env').value.trim()    || 'NOCODB_API_TOKEN';
-      cfg.source.tableIdEnv  = document.getElementById('cfg-nocodb-table-env').value.trim()    || 'NOCODB_TABLE_ID';
+      const url   = document.getElementById('cfg-nocodb-base-url')?.value.trim();
+      const token = document.getElementById('cfg-nocodb-token')?.value.trim();
+      const table = document.getElementById('cfg-nocodb-table-id')?.value.trim();
+      if (url)   envUpdates.NOCODB_BASE_URL  = url;
+      if (token) envUpdates.NOCODB_API_TOKEN = token;
+      if (table) envUpdates.NOCODB_TABLE_ID  = table;
     }
-    await post('/config', cfg);
+
+    const tasks = [post('/config', cfg)];
+    if (Object.keys(envUpdates).length) tasks.push(api('POST', '/env', envUpdates));
+    await Promise.all(tasks);
+
+    refreshEnvStatus();
+    // Update token placeholder to reflect the newly saved state
+    const tokenEl = document.getElementById('cfg-nocodb-token');
+    if (tokenEl && envUpdates.NOCODB_API_TOKEN) {
+      tokenEl.value = '';
+      tokenEl.placeholder = 'Currently set — leave blank to keep';
+    }
     status.textContent = 'Saved!';
     status.style.color = 'var(--success)';
     setTimeout(() => { status.textContent = ''; }, 2500);
@@ -317,29 +345,47 @@ document.getElementById('save-sources-btn').addEventListener('click', async () =
 
 // ── Settings ───────────────────────────────────────────────────────────────
 
+function updateModelAliasUI(aiModel) {
+  const notice   = document.getElementById('model-override-notice');
+  const writerEl = document.getElementById('cfg-writer-model');
+  const judgeEl  = document.getElementById('cfg-judge-model');
+  if (!notice || !writerEl || !judgeEl) return;
+  const active = !!(aiModel && aiModel.trim());
+  notice.style.display    = active ? '' : 'none';
+  notice.textContent      = active ? `AI_MODEL is set (${aiModel}) — writer and judge aliases below are ignored.` : '';
+  writerEl.disabled       = active;
+  judgeEl.disabled        = active;
+  writerEl.style.opacity  = active ? '0.45' : '';
+  judgeEl.style.opacity   = active ? '0.45' : '';
+}
+
 async function loadSettings() {
   try {
-    const [cfg, envStatus] = await Promise.all([get('/config'), getEnvStatus()]);
-    document.getElementById('cfg-company-name').value  = cfg.company?.name || '';
-    document.getElementById('cfg-project-name').value  = cfg.projectName || '';
-    document.getElementById('cfg-product-desc').value  = cfg.company?.productDescription || '';
-    document.getElementById('cfg-ai-provider').value   = cfg.ai?.provider || 'anthropic';
-    document.getElementById('cfg-article-type').value  = cfg.articleType || 'comparison';
-    document.getElementById('cfg-writer-model').value  = cfg.generation?.writerModel || 'opus';
-    document.getElementById('cfg-judge-model').value   = cfg.generation?.judgeModel || 'sonnet';
-    updateOpenAIHint();
+    const [cfg, envVars] = await Promise.all([get('/config'), get('/env')]);
 
-    // Show notice when AI_MODEL env var is set — it overrides the aliases above
-    const notice   = document.getElementById('model-override-notice');
-    const aiModel  = envStatus._aiModel;
-    if (notice) {
-      if (aiModel) {
-        notice.style.display = '';
-        notice.textContent   = `AI_MODEL is set in your .env (${aiModel}) — this overrides the writer and judge aliases above for all pipeline stages.`;
-      } else {
-        notice.style.display = 'none';
-      }
-    }
+    document.getElementById('cfg-company-name').value = cfg.company?.name || '';
+    document.getElementById('cfg-project-name').value = cfg.projectName || '';
+    document.getElementById('cfg-product-desc').value = cfg.company?.productDescription || '';
+    document.getElementById('cfg-article-type').value = cfg.articleType || 'comparison';
+    document.getElementById('cfg-writer-model').value = cfg.generation?.writerModel || 'opus';
+    document.getElementById('cfg-judge-model').value  = cfg.generation?.judgeModel  || 'sonnet';
+
+    // AI provider: prefer .env, fall back to config
+    document.getElementById('cfg-ai-provider').value = envVars.AI_PROVIDER || cfg.ai?.provider || 'anthropic';
+
+    // AI credentials from .env
+    const apiKeyEl = document.getElementById('cfg-api-key');
+    apiKeyEl.value = '';
+    const keyIsSet = envVars.AI_API_KEY === '__set__'
+      || envVars.ANTHROPIC_API_KEY === '__set__'
+      || envVars.OPENAI_API_KEY    === '__set__';
+    apiKeyEl.placeholder = keyIsSet ? 'Currently set — leave blank to keep' : 'Enter your API key';
+
+    document.getElementById('cfg-base-url').value = envVars.AI_BASE_URL || '';
+    document.getElementById('cfg-model').value    = envVars.AI_MODEL    || '';
+
+    updateOpenAIHint();
+    updateModelAliasUI(envVars.AI_MODEL || '');
   } catch (e) {
     console.error(e);
   }
@@ -352,17 +398,21 @@ function updateOpenAIHint() {
   el.style.display = provider === 'openai' ? '' : 'none';
 }
 document.getElementById('cfg-ai-provider').addEventListener('change', updateOpenAIHint);
+document.getElementById('cfg-model').addEventListener('input', function () {
+  updateModelAliasUI(this.value);
+});
 
 document.getElementById('save-settings-btn').addEventListener('click', async () => {
   const status = document.getElementById('save-settings-status');
   try {
     const cfg = await get('/config');
+    const provider = document.getElementById('cfg-ai-provider').value;
     cfg.projectName = document.getElementById('cfg-project-name').value;
     cfg.company = {
       name:               document.getElementById('cfg-company-name').value,
       productDescription: document.getElementById('cfg-product-desc').value,
     };
-    cfg.ai = { provider: document.getElementById('cfg-ai-provider').value };
+    cfg.ai = { provider };
     cfg.articleType = document.getElementById('cfg-article-type').value;
     cfg.generation  = {
       ...cfg.generation,
@@ -370,21 +420,30 @@ document.getElementById('save-settings-btn').addEventListener('click', async () 
       judgeModel:  document.getElementById('cfg-judge-model').value,
     };
 
-    const apiKey = document.getElementById('cfg-api-key').value;
-    const baseUrl = document.getElementById('cfg-base-url').value;
-    const model   = document.getElementById('cfg-model').value;
-    if (apiKey || baseUrl || model) {
-      status.textContent = 'Tip: API key / base URL / model override go in your .env file, not config.';
-      status.style.color = 'var(--warning)';
+    // Write AI credentials and overrides to .env
+    const envUpdates = { AI_PROVIDER: provider };
+    const apiKey = document.getElementById('cfg-api-key').value.trim();
+    if (apiKey) {
+      envUpdates.AI_API_KEY = apiKey;
+      envUpdates[provider === 'anthropic' ? 'ANTHROPIC_API_KEY' : 'OPENAI_API_KEY'] = apiKey;
+    }
+    // Always write base URL and model (empty string removes the key from .env)
+    envUpdates.AI_BASE_URL = document.getElementById('cfg-base-url').value.trim();
+    envUpdates.AI_MODEL    = document.getElementById('cfg-model').value.trim();
+
+    await Promise.all([post('/config', cfg), api('POST', '/env', envUpdates)]);
+    refreshEnvStatus();
+
+    // Update API key placeholder to reflect saved state
+    if (apiKey) {
+      const el = document.getElementById('cfg-api-key');
+      el.value = '';
+      el.placeholder = 'Currently set — leave blank to keep';
     }
 
-    await post('/config', cfg);
-    refreshEnvStatus();
-    if (!apiKey && !baseUrl && !model) {
-      status.textContent = 'Saved!';
-      status.style.color = 'var(--success)';
-      setTimeout(() => { status.textContent = ''; }, 2500);
-    }
+    status.textContent = 'Saved!';
+    status.style.color = 'var(--success)';
+    setTimeout(() => { status.textContent = ''; }, 2500);
   } catch (e) {
     status.textContent = `Error: ${e.message}`;
     status.style.color = 'var(--danger)';
@@ -395,7 +454,7 @@ document.getElementById('save-settings-btn').addEventListener('click', async () 
 
 async function loadPublishers() {
   try {
-    const [cfg, envStatus] = await Promise.all([get('/config'), getEnvStatus()]);
+    const [cfg, envVars] = await Promise.all([get('/config'), get('/env')]);
 
     // Markdown
     const md = cfg.output?.markdown || {};
@@ -404,22 +463,29 @@ async function loadPublishers() {
     // GitHub
     const gh = cfg.output?.github || {};
     document.getElementById('cfg-github-enabled').checked   = !!gh.enabled;
-    document.getElementById('cfg-github-token-env').value   = gh.tokenEnv || 'GITHUB_TOKEN';
-    document.getElementById('cfg-github-owner-env').value   = gh.ownerEnv || 'GITHUB_OWNER';
-    document.getElementById('cfg-github-repo-env').value    = gh.repoEnv  || 'GITHUB_REPO';
-    document.getElementById('cfg-github-branch').value      = gh.branch   || 'main';
-    document.getElementById('cfg-github-folder').value      = gh.folder   || 'content/articles';
+    document.getElementById('cfg-github-branch').value      = gh.branch || 'main';
+    document.getElementById('cfg-github-folder').value      = gh.folder || 'content/articles';
     document.getElementById('cfg-github-overwrite').checked = !!gh.overwriteExisting;
-    document.getElementById('github-token-warning').style.display = envStatus['GITHUB_TOKEN'] ? 'none' : '';
+
+    const ghTokenEl = document.getElementById('cfg-github-token');
+    ghTokenEl.value = '';
+    ghTokenEl.placeholder = envVars.GITHUB_TOKEN === '__set__'
+      ? 'Currently set — leave blank to keep' : 'ghp_xxxx…';
+    document.getElementById('cfg-github-owner').value = envVars.GITHUB_OWNER || '';
+    document.getElementById('cfg-github-repo').value  = envVars.GITHUB_REPO  || '';
 
     // Framer
     const fr = cfg.output?.framer || {};
-    document.getElementById('cfg-framer-enabled').checked         = !!fr.enabled;
-    document.getElementById('cfg-framer-token-env').value         = fr.tokenEnv        || 'FRAMER_TOKEN';
-    document.getElementById('cfg-framer-collection-env').value    = fr.collectionIdEnv || 'FRAMER_COLLECTION_ID';
+    document.getElementById('cfg-framer-enabled').checked = !!fr.enabled;
+
+    const frTokenEl = document.getElementById('cfg-framer-token');
+    frTokenEl.value = '';
+    frTokenEl.placeholder = envVars.FRAMER_TOKEN === '__set__'
+      ? 'Currently set — leave blank to keep' : 'framer_…';
+    document.getElementById('cfg-framer-collection').value = envVars.FRAMER_COLLECTION_ID || '';
+
     const fm = fr.fieldMapping || { title: 'title', slug: 'slug', body: 'content', description: 'description' };
-    document.getElementById('cfg-framer-field-mapping').value     = JSON.stringify(fm, null, 2);
-    document.getElementById('framer-token-warning').style.display = envStatus['FRAMER_TOKEN'] ? 'none' : '';
+    document.getElementById('cfg-framer-field-mapping').value = JSON.stringify(fm, null, 2);
 
     const frMode = fr.mode || 'single-body';
     document.getElementById('cfg-framer-mode').value              = frMode;
@@ -482,21 +548,21 @@ document.getElementById('save-publishers-btn').addEventListener('click', async (
       },
       github: {
         enabled:           document.getElementById('cfg-github-enabled').checked,
-        tokenEnv:          document.getElementById('cfg-github-token-env').value.trim() || 'GITHUB_TOKEN',
-        ownerEnv:          document.getElementById('cfg-github-owner-env').value.trim() || 'GITHUB_OWNER',
-        repoEnv:           document.getElementById('cfg-github-repo-env').value.trim()  || 'GITHUB_REPO',
-        branch:            document.getElementById('cfg-github-branch').value.trim()    || 'main',
-        folder:            document.getElementById('cfg-github-folder').value.trim()    || 'content/articles',
+        tokenEnv:          'GITHUB_TOKEN',
+        ownerEnv:          'GITHUB_OWNER',
+        repoEnv:           'GITHUB_REPO',
+        branch:            document.getElementById('cfg-github-branch').value.trim() || 'main',
+        folder:            document.getElementById('cfg-github-folder').value.trim() || 'content/articles',
         overwriteExisting: document.getElementById('cfg-github-overwrite').checked,
       },
       framer: {
         enabled:               document.getElementById('cfg-framer-enabled').checked,
-        tokenEnv:              document.getElementById('cfg-framer-token-env').value.trim()      || 'FRAMER_TOKEN',
-        collectionIdEnv:       document.getElementById('cfg-framer-collection-env').value.trim() || 'FRAMER_COLLECTION_ID',
+        tokenEnv:              'FRAMER_TOKEN',
+        collectionIdEnv:       'FRAMER_COLLECTION_ID',
         mode:                  framerMode,
         fieldMapping:          framerFieldMapping,
         sectionMapping:        framerSectionMapping,
-        bodyField:             document.getElementById('cfg-framer-body-field').value.trim()  || 'content',
+        bodyField:             document.getElementById('cfg-framer-body-field').value.trim() || 'content',
         introField:            framerIntroField || null,
         sectionMatching:       document.getElementById('cfg-framer-section-matching').value,
         unmappedSections:      document.getElementById('cfg-framer-unmapped-sections').value,
@@ -504,8 +570,33 @@ document.getElementById('save-publishers-btn').addEventListener('click', async (
       },
     };
 
-    await post('/config', cfg);
+    // Write secrets and credentials to .env
+    const envUpdates = {};
+    const ghToken = document.getElementById('cfg-github-token').value.trim();
+    const ghOwner = document.getElementById('cfg-github-owner').value.trim();
+    const ghRepo  = document.getElementById('cfg-github-repo').value.trim();
+    if (ghToken) envUpdates.GITHUB_TOKEN = ghToken;
+    envUpdates.GITHUB_OWNER = ghOwner;
+    envUpdates.GITHUB_REPO  = ghRepo;
+
+    const frToken = document.getElementById('cfg-framer-token').value.trim();
+    const frCol   = document.getElementById('cfg-framer-collection').value.trim();
+    if (frToken) envUpdates.FRAMER_TOKEN = frToken;
+    envUpdates.FRAMER_COLLECTION_ID = frCol;
+
+    await Promise.all([post('/config', cfg), api('POST', '/env', envUpdates)]);
     refreshEnvStatus();
+
+    // Update token placeholders to reflect saved state
+    if (ghToken) {
+      const el = document.getElementById('cfg-github-token');
+      el.value = ''; el.placeholder = 'Currently set — leave blank to keep';
+    }
+    if (frToken) {
+      const el = document.getElementById('cfg-framer-token');
+      el.value = ''; el.placeholder = 'Currently set — leave blank to keep';
+    }
+
     status.textContent = 'Saved!';
     status.style.color = 'var(--success)';
     setTimeout(() => { status.textContent = ''; }, 2500);
@@ -578,7 +669,10 @@ async function loadPromptsPage() {
     try {
       const data = await get(`/prompts/${key}`);
       const ta = document.querySelector(`#prompt-${key} .ctx-editor`);
-      if (ta) ta.value = data.content || '';
+      if (ta) {
+        ta.value    = data.content || data.example || '';
+        ta._example = data.example || '';
+      }
       promptsLoaded[key] = true;
     } catch (e) { console.error(e); }
   }

@@ -193,20 +193,19 @@
 
       <!-- NocoDB config (shown only when nocodb selected) -->
       <div id="nocodb-config" style="display:none">
-        <div class="notice">Set these values in your <code>.env</code> file. The field names below tell the pipeline which env var to read.</div>
         <div class="form-row">
           <div class="field">
-            <label>Base URL env var</label>
-            <input type="text" id="cfg-nocodb-base-url-env" value="NOCODB_BASE_URL" placeholder="NOCODB_BASE_URL">
+            <label>NocoDB URL</label>
+            <input type="text" id="cfg-nocodb-base-url" placeholder="https://your-nocodb.com" autocomplete="off">
           </div>
           <div class="field">
-            <label>API token env var</label>
-            <input type="text" id="cfg-nocodb-token-env" value="NOCODB_API_TOKEN" placeholder="NOCODB_API_TOKEN">
+            <label>API Token</label>
+            <input type="password" id="cfg-nocodb-token" placeholder="Enter token" autocomplete="new-password">
           </div>
         </div>
         <div class="field">
-          <label>Table ID env var</label>
-          <input type="text" id="cfg-nocodb-table-env" value="NOCODB_TABLE_ID" placeholder="NOCODB_TABLE_ID">
+          <label>Table ID</label>
+          <input type="text" id="cfg-nocodb-table-id" placeholder="tbl_xxxxx" autocomplete="off">
         </div>
       </div>
 
@@ -539,14 +538,10 @@
       </label>
     </div>
     <div class="publisher-card-body">
-      <div class="notice">Requires a personal access token with <code>repo</code> scope set in your <code>.env</code> file.</div>
-      <div class="warning-box" id="github-token-warning" style="display:none">
-        <span class="warning-icon">⚠</span> <strong>GITHUB_TOKEN</strong> is not set in your environment. Add it to your <code>.env</code> file to enable publishing.
-      </div>
       <div class="form-row">
         <div class="field">
-          <label>Token env var name</label>
-          <input type="text" id="cfg-github-token-env" value="GITHUB_TOKEN" placeholder="GITHUB_TOKEN">
+          <label>Personal access token <span style="font-weight:400;color:var(--c-text-3)">(repo scope)</span></label>
+          <input type="password" id="cfg-github-token" placeholder="ghp_xxxx…" autocomplete="new-password">
         </div>
         <div class="field">
           <label>Branch</label>
@@ -555,12 +550,12 @@
       </div>
       <div class="form-row">
         <div class="field">
-          <label>Owner env var name</label>
-          <input type="text" id="cfg-github-owner-env" value="GITHUB_OWNER" placeholder="GITHUB_OWNER">
+          <label>Repository owner</label>
+          <input type="text" id="cfg-github-owner" placeholder="your-username" autocomplete="off">
         </div>
         <div class="field">
-          <label>Repo env var name</label>
-          <input type="text" id="cfg-github-repo-env" value="GITHUB_REPO" placeholder="GITHUB_REPO">
+          <label>Repository name</label>
+          <input type="text" id="cfg-github-repo" placeholder="my-repo" autocomplete="off">
         </div>
       </div>
       <div class="field">
@@ -593,18 +588,14 @@
       </label>
     </div>
     <div class="publisher-card-body">
-      <div class="notice">Requires a Framer API token set in your <code>.env</code> file.</div>
-      <div class="warning-box" id="framer-token-warning" style="display:none">
-        <span class="warning-icon">⚠</span> <strong>FRAMER_TOKEN</strong> is not set in your environment. Add it to your <code>.env</code> file to enable publishing.
-      </div>
       <div class="form-row">
         <div class="field">
-          <label>Token env var name</label>
-          <input type="text" id="cfg-framer-token-env" value="FRAMER_TOKEN" placeholder="FRAMER_TOKEN">
+          <label>Framer API token</label>
+          <input type="password" id="cfg-framer-token" placeholder="framer_…" autocomplete="new-password">
         </div>
         <div class="field">
-          <label>Collection ID env var name</label>
-          <input type="text" id="cfg-framer-collection-env" value="FRAMER_COLLECTION_ID" placeholder="FRAMER_COLLECTION_ID">
+          <label>Collection ID</label>
+          <input type="text" id="cfg-framer-collection" placeholder="abc123…" autocomplete="off">
         </div>
       </div>
       <div class="form-row">
@@ -682,7 +673,7 @@
   <div class="card mb-4">
     <div class="card-header"><h3>AI Provider</h3></div>
     <div class="card-body">
-      <div class="notice">API keys are stored only in your local <code>.env</code> file and are never sent to this UI server beyond your own machine.</div>
+      <div class="notice">Credentials are saved directly to your local <code>.env</code> file and never leave your machine. Leave any secret field blank to keep the existing value.</div>
       <div class="form-row">
         <div class="field">
           <label>Provider</label>

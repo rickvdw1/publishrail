@@ -13,6 +13,70 @@ const { spawn } = require('child_process');
 const ROOT = path.join(__dirname, '..');
 const PUBLIC = path.join(__dirname, 'public');
 const PORT = process.env.UI_PORT || 3737;
+const ENV_PATH = path.join(ROOT, '.env');
+
+// ── .env read/write ────────────────────────────────────────────────────────
+
+const WRITABLE_ENV_KEYS = new Set([
+  'AI_PROVIDER', 'AI_API_KEY', 'ANTHROPIC_API_KEY', 'OPENAI_API_KEY',
+  'AI_BASE_URL', 'AI_MODEL',
+  'NOCODB_BASE_URL', 'NOCODB_API_TOKEN', 'NOCODB_TABLE_ID',
+  'GITHUB_TOKEN', 'GITHUB_OWNER', 'GITHUB_REPO',
+  'FRAMER_TOKEN', 'FRAMER_COLLECTION_ID',
+]);
+
+const SECRET_ENV_KEYS = new Set([
+  'AI_API_KEY', 'ANTHROPIC_API_KEY', 'OPENAI_API_KEY',
+  'NOCODB_API_TOKEN', 'GITHUB_TOKEN', 'FRAMER_TOKEN',
+]);
+
+function readDotEnv() {
+  if (!fs.existsSync(ENV_PATH)) return {};
+  const result = {};
+  for (const line of fs.readFileSync(ENV_PATH, 'utf8').split('\n')) {
+    const t = line.trim();
+    if (!t || t.startsWith('#')) continue;
+    const eq = t.indexOf('=');
+    if (eq === -1) continue;
+    result[t.slice(0, eq).trim()] = t.slice(eq + 1);
+  }
+  return result;
+}
+
+function writeDotEnv(updates) {
+  const toWrite = {};
+  const toDelete = new Set();
+  for (const [k, v] of Object.entries(updates)) {
+    if (v === '') toDelete.add(k); else toWrite[k] = v;
+  }
+
+  let lines = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf8').split('\n') : [];
+  const remaining = { ...toWrite };
+
+  lines = lines
+    .filter((line) => {
+      const t = line.trim();
+      if (!t || t.startsWith('#')) return true;
+      const eq = t.indexOf('=');
+      return eq === -1 || !toDelete.has(t.slice(0, eq).trim());
+    })
+    .map((line) => {
+      const t = line.trim();
+      if (!t || t.startsWith('#')) return line;
+      const eq = t.indexOf('=');
+      if (eq === -1) return line;
+      const key = t.slice(0, eq).trim();
+      if (key in remaining) { const v = remaining[key]; delete remaining[key]; return `${key}=${v}`; }
+      return line;
+    });
+
+  for (const [k, v] of Object.entries(remaining)) lines.push(`${k}=${v}`);
+  fs.writeFileSync(ENV_PATH, lines.join('\n'), 'utf8');
+
+  for (const [k, v] of Object.entries(updates)) {
+    if (v === '') delete process.env[k]; else process.env[k] = v;
+  }
+}
 
 // ── Static file helpers ────────────────────────────────────────────────────
 
@@ -293,7 +357,9 @@ async function router(req, res) {
       const filePath = safeRootPath(PROMPT_FILE_MAP[key]);
       if (method === 'GET') {
         const content = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
-        return json(res, { content });
+        const examplePath = filePath.replace(/\.md$/, '.example.md');
+        const example = fs.existsSync(examplePath) ? fs.readFileSync(examplePath, 'utf8') : '';
+        return json(res, { content, example });
       }
       if (method === 'POST') {
         const body = await readBody(req);
@@ -354,6 +420,28 @@ async function router(req, res) {
       const filePath = safeRootPath('outputs', filename);
       if (!fs.existsSync(filePath)) return json(res, { error: 'Not found' }, 404);
       return json(res, JSON.parse(fs.readFileSync(filePath, 'utf8')));
+    }
+
+    // ── Env vars (read/write .env) ────────────────────────────────────────────
+    if (pathname === '/api/env' && method === 'GET') {
+      const dotenv = readDotEnv();
+      const result = {};
+      for (const key of WRITABLE_ENV_KEYS) {
+        const val = dotenv[key] ?? '';
+        result[key] = (SECRET_ENV_KEYS.has(key) && val) ? '__set__' : val;
+      }
+      return json(res, result);
+    }
+
+    if (pathname === '/api/env' && method === 'POST') {
+      const body = await readBody(req);
+      const incoming = JSON.parse(body);
+      const safe = {};
+      for (const [key, val] of Object.entries(incoming)) {
+        if (WRITABLE_ENV_KEYS.has(key) && val !== '__set__') safe[key] = String(val);
+      }
+      if (Object.keys(safe).length) writeDotEnv(safe);
+      return json(res, { ok: true });
     }
 
     // ── File upload ───────────────────────────────────────────────────────────

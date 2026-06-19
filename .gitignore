@@ -7,6 +7,12 @@
 # --- User project config (may contain local paths) ---
 config/project.config.json
 
+# --- Per-instance knowledge and prompts (users add their own) ---
+context/*.md
+!context/*.example.md
+prompts/*.md
+!prompts/*.example.md
+
 # --- Dependencies ---
 node_modules/
 

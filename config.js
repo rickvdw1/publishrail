@@ -55,6 +55,7 @@ function loadContextFile(key, fallbackLabel) {
 }
 
 // Load a prompt template by config key (writer/judge/rewrite/research).
+// Falls back to the .example.md version so the pipeline works on a fresh clone.
 function loadPromptFile(key) {
   const filePath = getPromptFilePath(key) || `prompts/${key}Prompt.md`;
 
@@ -65,7 +66,8 @@ function loadPromptFile(key) {
   try {
     return fs.readFileSync(fullPath, 'utf8');
   } catch {
-    return null;
+    const examplePath = fullPath.replace(/\.md$/, '.example.md');
+    try { return fs.readFileSync(examplePath, 'utf8'); } catch { return null; }
   }
 }
 
