@@ -59,3 +59,6 @@ TEST_PROMPT_DS.txt
 # --- Marketing site (proprietary, not open source) ---
 ui/marketing/
 ui/marketing-server.js
+
+# Local website deploy script
+/deploy-website.sh
