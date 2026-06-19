@@ -1,0 +1,33 @@
+# PublishRail — example systemd service
+# Replace: /opt/publishrail → your actual install path
+#          deploy-user → your actual user
+#
+# Setup:
+#   sudo cp this file /etc/systemd/system/publishrail.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable publishrail
+#   sudo systemctl start publishrail
+
+[Unit]
+Description=PublishRail UI
+After=network.target
+
+[Service]
+Type=simple
+User=deploy-user
+WorkingDirectory=/opt/publishrail
+
+# Loads credentials from .env in the project root
+EnvironmentFile=/opt/publishrail/.env
+
+ExecStart=/usr/bin/node ui/server.js
+Restart=always
+RestartSec=10
+
+# Basic hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/publishrail
+
+[Install]
+WantedBy=multi-user.target

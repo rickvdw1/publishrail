@@ -55,3 +55,7 @@ TEST_PROMPT_DS.txt
 .vscode/
 .idea/
 /exported-use-cases/
+
+# --- Marketing site (proprietary, not open source) ---
+ui/marketing/
+ui/marketing-server.js

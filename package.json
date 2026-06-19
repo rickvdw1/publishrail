@@ -1,7 +1,7 @@
 {
-  "name": "article-pipeline",
+  "name": "publishrail",
   "version": "1.0.0",
-  "description": "Configurable article-generation pipeline — generate, judge, and publish editorial-quality articles using Claude AI.",
+  "description": "PublishRail — a source-agnostic article publishing pipeline for Framer, GitHub, and modern CMS workflows.",
   "main": "index.js",
   "scripts": {
     "generate": "node index.js",
@@ -13,7 +13,6 @@
     "publish:framer": "node -e \"require('./publishers/framerPublisher').publishToFramer([], { dryRun: true })\"",
     "validate-config": "node -e \"const c = require('./config'); c.loadConfig(); console.log('[ok] Config loaded:', JSON.stringify(c.loadConfig(), null, 2))\"",
     "ui": "node ui/server.js",
-    "marketing": "node ui/marketing-server.js",
     "test": "node --test"
   },
   "keywords": [

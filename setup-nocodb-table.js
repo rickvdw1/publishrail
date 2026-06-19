@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Creates all required columns in the article pipeline NocoDB table.
+// Creates all required columns in the PublishRail NocoDB table.
 // Run once: node setup-nocodb-table.js
 // Safe to re-run — skips columns that already exist.
 
@@ -106,7 +106,7 @@ async function main() {
   const tableId = getTableId();
   const client = makeClient(base);
 
-  console.log(`\n=== Article Pipeline — NocoDB Table Setup ===`);
+  console.log(`\n=== PublishRail — NocoDB Table Setup ===`);
   console.log(`Base: ${base}`);
   console.log(`Table: ${tableId}\n`);
 

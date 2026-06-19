@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Article Pipeline UI — local web server
+// PublishRail UI — local web server
 // Usage: node ui/server.js  (or: npm run ui)
 // Opens at http://localhost:3737
 
@@ -370,6 +370,6 @@ async function router(req, res) {
 
 const server = http.createServer(router);
 server.listen(PORT, () => {
-  console.log(`\n  Article Pipeline UI`);
+  console.log(`\n  PublishRail UI`);
   console.log(`  Running at http://localhost:${PORT}\n`);
 });

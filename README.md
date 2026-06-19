@@ -1,4 +1,4 @@
-# Article Pipeline
+# PublishRail
 
 An open-source, configurable article-generation pipeline. Feed it rows from NocoDB, a CSV, or a JSON file; it generates editorial-quality articles using Claude AI, validates and judges them, and exports the results as Markdown. Optionally publish directly to Framer CMS.
 
